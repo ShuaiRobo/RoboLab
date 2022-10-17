@@ -7,42 +7,55 @@
 </head>
 
 <script>
-    var ClickCount = 0;
-    var StartX, StartY, EndX, EndY;
-    var DisX, DisY, Dis;
+    var ClickCount = 0; //点击次数变量
+    var StartX, StartY, EndX, EndY; //开始结束坐标变量
+    var DisX, DisY, Dis; //距离变量
+    var LineColor //画线颜色变量
+    var Maps //地图路径变量
 
-    window.onload = function () {
+    //点击'提交'按钮时触发该函数
+    function 提交() {
+        //通过控件获取地图和颜色
+        LineColor = document.getElementById('Linecolor').value;
+        Maps = document.getElementById('Maps').value;
+
+        //加载地图
         var ctx = document.getElementById("canvas").getContext('2d');
         var img = new Image();
-        img.src = '2022小学组-园艺机器人.jpg';
+        img.src = Maps;
         img.onload = function () {
             ctx.drawImage(img, 0, 0, 1180, 571.5);
         }
 
+        //地图点击函数
         document.getElementById('canvas').onclick = function (e) {
-            ClickCount = ClickCount + 1;
+            ClickCount = ClickCount + 1; //点击时 点击次数变量+1
             e = e || window.event;
             var x = e.offsetX || e.layerX,
-                y = e.offsetY || e.layerY;
+                y = e.offsetY || e.layerY; //接收点击地图的位置XY
 
+            //第一次点击时先清空屏幕，在点击位置显示蓝色方块
             if (ClickCount == 1) {
-
-                ctx.clearRect(0, 0, 1180, 571.5)
+                ctx.clearRect(0, 0, 1180, 571.5);
                 ctx.drawImage(img, 0, 0, 1180, 571.5);
 
+                //记录第一次点击位置
                 StartX = x;
                 StartY = y;
                 ctx.fillStyle = "Blue";
                 ctx.fillRect(x - 5, y - 5, 10, 10);
             }
 
+            //第二次点击时显示红色方块，并连线
             if (ClickCount == 2) {
+                //记录第二次点击位置
                 EndX = x;
                 EndY = y;
                 ctx.fillStyle = "Red";
                 ctx.fillRect(x - 5, y - 5, 10, 10);
 
-                ctx.strokeStyle = "Yellow";
+                //画线
+                ctx.strokeStyle = LineColor;
                 ctx.beginPath();
                 ctx.moveTo(StartX, StartY);
                 ctx.lineTo(StartX, EndY);
@@ -50,29 +63,54 @@
                 ctx.closePath();
                 ctx.stroke();
 
+                //点击次数归零并计算距离
                 ClickCount = 0;
                 DisX = Math.abs((StartX - EndX) * 2);
                 DisY = Math.abs((StartY - EndY) * 2);
                 Dis = Math.abs(Math.sqrt(DisX * DisX + DisY * DisY));
                 Dis = Dis.toFixed(2)
 
+                //在表格中显示
                 document.getElementById("dis").innerHTML = Dis + 'mm';
                 document.getElementById("dis_x").innerHTML = DisX + 'mm';
                 document.getElementById("dis_y").innerHTML = DisY + 'mm';
-                //alert(ClickCount)
             }
         }
 
     }
+
+
+    // window.onload = function () {
+    //     var ctx = document.getElementById("canvas").getContext('2d');
+    //     var img = new Image();
+    //     img.src = Maps;
+    //     img.onload = function () {
+    //         ctx.drawImage(img, 0, 0, 1180, 571.5);
+    //     }
+    // }
 </script>
 
-<body>
-    <div style="text-align:center; vertical-align:middle;">
-        <p>在地图上两个位置点击左键，下方表格查看距离</p>
-        <p>Click the left button in two places on the map and view the distance in the table below.</p>
-        <canvas id="canvas" style="border: 4px solid #999;" width="1180" height="571.5"></canvas>
+<body style="border-radius: 10px; border: 5px solid #8AC007;">
+    <div style="text-align:center; vertical-align:middle; ">
+        <h1>地图测量工具</h1>
+        <h3>选择地图和画线颜色以后，点击”提交“按钮开始测量</h3>
+
+        <form action="">
+            地图:
+            <select id="Maps">
+                <option value="2022小学组.jpg" selected>小学组</option>
+                <option value="2022中学组.jpg">初中组（不可用）</option>
+                <option value="2022高学组.jpg">高中组（不可用）</option>
+            </select>
+            线颜色:<input type="color" id="Linecolor">
+            <input type="button" name="" value="提交" onclick="提交()">
+        </form>
+
+        <canvas id="canvas" style="border-radius: 10px; border: 2px solid #8AC007;" width="1180"
+            height="571.5"></canvas>
         <p> </p>
-        <table border="3" style="text-align:center; vertical-align:middle; margin:auto;">
+        <table border="3"
+            style="text-align:center; vertical-align:middle; margin:auto; border-radius: 10px; border: 5px solid #8AC007;">
             <tr>
                 <td>横向距离</td>
                 <td>纵向距离</td>
@@ -89,7 +127,7 @@
                 <td id='dis'> 距离 </td>
             </tr>
         </table>
-        <p> 如有问题，请联系微信：帅帅[微信：yanyeshuai]</p>
+        <p> 如有问题或需要，请联系帅帅[微信：yanyeshuai]</p>
     </div>
 </body>
 

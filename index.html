@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -70,6 +71,21 @@
                 Dis = Math.abs(Math.sqrt(DisX * DisX + DisY * DisY));
                 Dis = Dis.toFixed(2)
 
+                ctx.fillStyle = LineColor;
+                ctx.font = "20px 微软雅黑 ";
+                ctx.fillText('横：'+DisX+'mm', StartX+(EndX - StartX)/2-30, EndY-10);
+                ctx.fillText('纵：'+DisY+'mm', StartX-30, StartY+(EndY - StartY)/2);
+                ctx.fillText('直线：'+Dis+'mm', StartX+(EndX - StartX)/2-30, StartY+(EndY - StartY)/2-10);
+                // console.log("起点"+StartX);
+                // console.log("横"+DisX);
+                // console.log(DisX/2);
+                // console.log(StartX+DisX/2);
+                StartDeg = Math.asin(Math.abs(DisX/Dis)) * 180/Math.PI;
+                EndDeg = Math.asin(Math.abs(DisY/Dis)) * 180/Math.PI;
+                StartDeg = StartDeg.toFixed(2);
+                EndDeg = EndDeg.toFixed(2);
+                ctx.fillText(StartDeg+'°', StartX, StartY)
+                ctx.fillText(EndDeg+'°', EndX, EndY)
                 //在表格中显示
                 document.getElementById("dis").innerHTML = Dis + 'mm';
                 document.getElementById("dis_x").innerHTML = DisX + 'mm';

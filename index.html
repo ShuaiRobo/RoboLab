@@ -27,6 +27,8 @@
         img.onload = function () {
             ctx.drawImage(img, 0, 0, 1180, 571.5);
         }
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "black";
 
         //地图点击函数
         document.getElementById('canvas').onclick = function (e) {
@@ -39,8 +41,6 @@
             if (ClickCount == 1) {
                 ctx.clearRect(0, 0, 1180, 571.5);
                 ctx.drawImage(img, 0, 0, 1180, 571.5);
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = "black";
 
                 //记录第一次点击位置
                 StartX = x;
@@ -58,6 +58,7 @@
                 ctx.fillRect(x - 5, y - 5, 10, 10);
 
                 //画线
+                ctx.lineWidth = 2;
                 ctx.strokeStyle = LineColor;
                 ctx.beginPath();
                 ctx.moveTo(StartX, StartY);
@@ -74,6 +75,7 @@
                 Dis = Dis.toFixed(2)
 
                 //显示距离文本
+                ctx.lineWidth = 1;
                 ctx.font = "20px 微软雅黑 ";
                 ctx.strokeText('横：' + DisX + 'mm', StartX + (EndX - StartX) / 2 - 30, EndY - 10);
                 ctx.strokeText('纵：' + DisY + 'mm', StartX - 30, StartY + (EndY - StartY) / 2);
@@ -98,6 +100,8 @@
                 document.getElementById("dis").innerHTML = Dis + 'mm';
                 document.getElementById("dis_x").innerHTML = DisX + 'mm';
                 document.getElementById("dis_y").innerHTML = DisY + 'mm';
+                document.getElementById("startDeg").innerHTML = StartDeg + '°';
+                document.getElementById("endDeg").innerHTML = EndDeg + '°';
             }
         }
 
@@ -126,7 +130,7 @@
                 <option value="2022中学组.jpg">初中组（不可用）</option>
                 <option value="2022高学组.jpg">高中组（不可用）</option>
             </select>
-            线颜色:<input type="color" id="Linecolor">
+            线颜色:<input type="color" id="Linecolor" value="#ff0000">
             <input type="button" name="" value="提交" onclick="提交()">
         </form>
 
@@ -139,11 +143,15 @@
                 <td>横向距离</td>
                 <td>纵向距离</td>
                 <td>距离</td>
+                <td>开始点角度</td>
+                <td>结束点角度</td>
             </tr>
             <tr>
                 <td id='dis_x'> 横向距离 </td>
                 <td id='dis_y'> 纵向距离 </td>
                 <td id='dis'> 距离 </td>
+                <td id='startDeg'>开始点角度</td>
+                <td id='endDeg'>结束点角度</td>
             </tr>
         </table>
         <p> 如有问题或需要，请联系帅帅[微信：yanyeshuai]</p>

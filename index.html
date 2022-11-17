@@ -13,19 +13,24 @@
     var DisX, DisY, Dis; //距离变量
     var LineColor //画线颜色变量
     var Maps //地图路径变量
+    var MapsWH = {'2022小学组.jpg':[1181,571], '垃圾分类.jpg':[1200,600]}
 
     //点击'提交'按钮时触发该函数
     function 提交() {
         //通过控件获取地图和颜色
         LineColor = document.getElementById('Linecolor').value;
         Maps = document.getElementById('Maps').value;
+        var canvas = document.getElementById('canvas');
+        canvas.width = MapsWH[Maps][0];
+        canvas.height = MapsWH[Maps][1];
 
         //加载地图
         var ctx = document.getElementById("canvas").getContext('2d');
+        ctx.clearRect(0, 0, 1200, 600);
         var img = new Image();
         img.src = Maps;
         img.onload = function () {
-            ctx.drawImage(img, 0, 0, 1180, 571.5);
+            ctx.drawImage(img, 0, 0, MapsWH[Maps][0], MapsWH[Maps][1]);
         }
         ctx.shadowBlur = 20;
         ctx.shadowColor = "black";
@@ -39,8 +44,8 @@
 
             //第一次点击时先清空屏幕，在点击位置显示蓝色方块
             if (ClickCount == 1) {
-                ctx.clearRect(0, 0, 1180, 571.5);
-                ctx.drawImage(img, 0, 0, 1180, 571.5);
+                ctx.clearRect(0, 0, 1200, 600);
+                ctx.drawImage(img, 0, 0, MapsWH[Maps][0], MapsWH[Maps][1]);
 
                 //记录第一次点击位置
                 StartX = x;
@@ -129,13 +134,14 @@
                 <option value="2022小学组.jpg" selected>小学组</option>
                 <option value="2022中学组.jpg">初中组（不可用）</option>
                 <option value="2022高学组.jpg">高中组（不可用）</option>
+                <option value="垃圾分类.jpg">中鸣-垃圾分类</option>
             </select>
             线颜色:<input type="color" id="Linecolor" value="#fb00ff">
             <input type="button" name="" value="提交" onclick="提交()">
         </form>
 
-        <canvas id="canvas" style="border-radius: 10px; border: 2px solid #8AC007;" width="1180"
-            height="571.5"></canvas>
+        <canvas id="canvas" style="border-radius: 10px; border: 2px solid #8AC007;" width="1200"
+            height="600"></canvas>
         <p> </p>
         <table border="3"
             style="text-align:center; vertical-align:middle; margin:auto; border-radius: 10px; border: 5px solid #8AC007;">

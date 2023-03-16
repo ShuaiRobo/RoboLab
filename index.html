@@ -4,7 +4,7 @@
 <head>
     <script type="text/javascript"></script>
     <meta charset="UTF-8">
-    <title>地图测量工具 by:帅帅[微信：yanyeshuai]</title>
+    <title>帅帅[微信：yanyeshuai]</title>
 </head>
 
 <script>
@@ -13,7 +13,7 @@
     var DisX, DisY, Dis; //距离变量
     var LineColor //画线颜色变量
     var Maps //地图路径变量
-    var MapsWH = {'2022小学组.jpg':[1181,571], '垃圾分类.jpg':[1200,600]}
+    var MapsWH = {'2023小学组.jpg':[1181,571], '2023中学组.jpg':[1181,571], '2023高中组.jpg':[1181,571], '垃圾分类.jpg':[1200,600]}
 
     //点击'提交'按钮时触发该函数
     function 提交() {
@@ -126,14 +126,17 @@
 <body style="border-radius: 10px; border: 5px solid #8AC007;">
     <div style="text-align:center; vertical-align:middle; ">
         <h1>地图测量工具</h1>
-        <h3>选择地图和画线颜色以后，点击”提交“按钮开始测量</h3>
+        <p>选择地图和画线颜色以后，点击”提交“按钮开始测量！</p>
 
         <form action="">
             地图:
             <select id="Maps">
-                <option value="2022小学组.jpg" selected>小学组</option>
-                <option value="2022中学组.jpg">初中组（不可用）</option>
-                <option value="2022高学组.jpg">高中组（不可用）</option>
+                <option value="2023小学组.jpg" selected>2023小学组(打印80一张包邮)</option>
+                <option value="2023中学组.jpg">2023初中组(打印80一张包邮)</option>
+                <option value="2023高中组.jpg">2023高中组(打印80一张包邮)</option>
+                <option value="2022小学组.jpg">2022小学组(打印80一张包邮)</option>
+                <option value="2022中学组.jpg">2022初中组(打印80一张包邮)</option>
+                <option value="2022高中组.jpg">2022高中组(打印80一张包邮)</option>
                 <option value="垃圾分类.jpg">中鸣-垃圾分类</option>
             </select>
             线颜色:<input type="color" id="Linecolor" value="#fb00ff">
@@ -145,6 +148,7 @@
         <p> </p>
         <table border="3"
             style="text-align:center; vertical-align:middle; margin:auto; border-radius: 10px; border: 5px solid #8AC007;">
+            <p> 承接教师竞赛技术培训，方案，EV3模块定制，竞赛地图打印等业务，需要请微信联系💕</p>
             <tr>
                 <td>横向距离</td>
                 <td>纵向距离</td>

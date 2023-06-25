@@ -12,7 +12,7 @@
     }
 
     .container {
-      display: block;
+      display: flex;
       justify-content: center;
       align-items: flex-start;
       padding: 10px;
@@ -112,28 +112,6 @@
       }
     }
 
-    function updateFileList() {
-      const owner = "ShuaiRobo"; // 仓库所有者的用户名
-      const repo = "RoboLab"; // 仓库名称
-      const path = "考级题目"; // 从目录开始搜索文件，可自定义文件路径
-      fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`)
-        .then(response => response.json())
-        .then(data => {
-          const fileSelect = document.getElementById("file");
-          data.forEach(file => {
-            if (file.type === "file") {
-              const option = document.createElement("option");
-              option.value = file.download_url;
-              option.textContent = file.path;
-              fileSelect.appendChild(option);
-            }
-          });
-        })
-        .catch(err => {
-          console.error(err);
-        });
-
-    }
 
     function jumpToQuestion(index) {
       var question = document.getElementById('question-' + index);
@@ -141,8 +119,10 @@
     }
 
     function openFile() {
-      const element = document.getElementById('file'); // 获取元素
-      const path = element.value; // 获取元素内容
+      var urlParams = new URLSearchParams(window.location.search);
+      var filename = urlParams.get('filename');
+      var path = "https://raw.githubusercontent.com/ShuaiRobo/RoboLab/main/" + filename
+      console.log(path);
 
       var xhr = new XMLHttpRequest();
       xhr.open('GET', path, true);
@@ -236,13 +216,7 @@
       questionItem.style.backgroundColor = 'lightblue'; //选择后将编号背景框改变颜色
     }
 
-    updateFileList();
-
-    function test() {
-      const element = document.getElementById('file'); // 获取元素
-      const elementContent = element.value; // 获取元素内容
-      console.log(elementContent)
-    }
+    openFile();
   </script>
 </head>
 
@@ -250,10 +224,6 @@
 <body>
   <div class="container">
     <div class="sidebar">
-      <label for="file">选择文件：</label>
-      <select name="file" id="file"></select>
-      <button onclick="openFile()">开始考试</button>
-      <hr>
       <div class="timer" id="timer">剩余时间</div>
       <hr>
       <h3>答题卡</h3>

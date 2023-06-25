@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>GitHub 文件列表</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			font-size: 16px;
+			color: #333;
+			line-height: 1.5;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+		}
+
+		h1 {
+			font-size: 36px;
+			font-weight: bold;
+			color: #333;
+			text-align: center;
+			margin-top: 50px;
+			margin-bottom: 20px;
+		}
+
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		li {
+			margin-bottom: 10px;
+			background-color: white;
+			padding: 10px;
+			border-radius: 5px;
+			box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+		}
+
+		a {
+			color: #333;
+			text-decoration: none;
+			border-bottom: 1px dotted #333;
+			transition: border-bottom 0.2s ease-in-out;
+		}
+
+		a:hover {
+			border-bottom-style: solid;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>GitHub 文件列表</h1>
+	<ul id="fileList"></ul>
+	<script>
+		const owner = "ShuaiRobo"; // 仓库所有者的用户名
+		const repo = "RoboLab"; // 仓库名称
+		const path = "考级题目"; // 从目录开始搜索文件，可自定义文件路径
+
+		var apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
+		fetch(apiUrl)
+			.then(response => response.json())
+			.then(data => {
+				var fileList = "";
+				data.forEach(file => {
+					if (file.type == "file") {
+						fileList += `<li><a href="考级模拟.html?filename=${file.path}">${file.name}</a></li>`;
+					}
+				});
+				document.getElementById("fileList").innerHTML = fileList;
+			})
+			.catch(error => console.error(error));
+	</script>
+</body>
+
+</html>

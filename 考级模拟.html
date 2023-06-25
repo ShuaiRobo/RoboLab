@@ -12,10 +12,10 @@
     }
 
     .container {
-      display: flex;
+      display: block;
       justify-content: center;
       align-items: flex-start;
-      padding: 20px;
+      padding: 10px;
     }
 
     h3 {
@@ -24,10 +24,12 @@
     }
 
     .sidebar {
-      width: 20%;
+      display: inline-block;
+      vertical-align: top;
+      width: 240px;
       padding: 10px;
       border: 2px solid #ccc;
-      border-radius: 5px;
+      border-radius: 3px;
       background-color: #fff;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       position: sticky;
@@ -39,17 +41,19 @@
       padding: 0;
       display: flex;
       flex-wrap: wrap;
+      margin-left: 5px;
     }
 
     .question-list li {
-      margin-bottom: 10px;
+      margin-bottom: 5px;
       cursor: pointer;
-      width: 20%;
+      width: 40px;
       box-sizing: border-box;
       padding: 10px;
       border: 1px solid #ccc;
       text-align: center;
-      margin-right: 10px;
+      margin-right: 2.5px;
+      margin-left: 2.5px;
       background-color: #f9f9f9;
       transition: background-color 0.3s ease;
     }
@@ -59,6 +63,8 @@
     }
 
     .question {
+      display: inline-block;
+      vertical-align: top;
       width: 80%;
       padding: 10px;
       margin-left: 20px;
@@ -82,6 +88,7 @@
       margin-top: 10px;
     }
   </style>
+  <script src="https://cdn.staticfile.org/xlsx/0.16.8/xlsx.full.min.js"></script>
   <script>
     var timeLeft = 1800; // 倒计时时间，单位为秒
     var timerInterval; // 计时器的引用
@@ -104,9 +111,10 @@
         timeLeft--;
       }
     }
+
     function jumpToQuestion(index) {
       var question = document.getElementById('question-' + index);
-      question.scrollIntoView();// 跳转对应题目
+      question.scrollIntoView(); // 跳转对应题目
     }
 
     function handleFileSelect(event) {
@@ -115,9 +123,13 @@
 
       reader.onload = function (e) {
         var data = new Uint8Array(e.target.result);
-        var workbook = XLSX.read(data, { type: 'array' });
+        var workbook = XLSX.read(data, {
+          type: 'array'
+        });
         var worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        var jsonData = XLSX.utils.sheet_to_json(worksheet, {
+          header: 1
+        });
 
         var questionContainer = document.getElementById('question-container');
         questionContainer.innerHTML = ''; // 清空题目容器
@@ -144,16 +156,20 @@
           optionsDiv.className = 'options';
 
           var optionALabel = document.createElement('label');
-          optionALabel.innerHTML = '<input type="radio" name="q' + questionNumber + '" value="A" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionA;
+          optionALabel.innerHTML = '<input type="radio" name="q' + questionNumber +
+            '" value="A" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionA;
 
           var optionBLabel = document.createElement('label');
-          optionBLabel.innerHTML = '<input type="radio" name="q' + questionNumber + '" value="B" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionB;
+          optionBLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
+            '" value="B" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionB;
 
           var optionCLabel = document.createElement('label');
-          optionCLabel.innerHTML = '<input type="radio" name="q' + questionNumber + '" value="C" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionC;
+          optionCLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
+            '" value="C" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionC;
 
           var optionDLabel = document.createElement('label');
-          optionDLabel.innerHTML = '<input type="radio" name="q' + questionNumber + '" value="D" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionD;
+          optionDLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
+            '" value="D" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionD;
 
           optionsDiv.appendChild(optionALabel);
           optionsDiv.appendChild(optionBLabel);
@@ -192,7 +208,7 @@
       <div class="timer" id="timer">剩余时间</div>
       <hr>
       <h3>答题卡</h3>
-      <div>选择题</div>
+      <h5>选择题</h5>
       <ul class="question-list">
         <li onclick="jumpToQuestion(1)" id="question-item-1">1</li>
         <li onclick="jumpToQuestion(2)" id="question-item-2">2</li>
@@ -225,7 +241,7 @@
         <li onclick="jumpToQuestion(29)" id="question-item-29">29</li>
         <li onclick="jumpToQuestion(30)" id="question-item-30">30</li>
       </ul>
-      <div>判断题</div>
+      <h5>判断题</h5>
       <ul class="question-list">
         <li onclick="jumpToQuestion(31)">31</li>
         <li onclick="jumpToQuestion(32)">32</li>

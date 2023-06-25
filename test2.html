@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Github 文件目录下拉列表</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<h1>Github 文件目录下拉列表</h1>
+	<div>
+		<label for="repo-owner">Github 用户名：</label>
+		<input type="text" id="repo-owner">
+		<br>
+		<label for="repo-name">仓库名：</label>
+		<input type="text" id="repo-name">
+		<br>
+		<label for="path">文件夹路径：</label>
+		<input type="text" id="path">
+		<br><br>
+		<select id="file-list"></select>
+	</div>
+
+	<script>
+		const select = document.getElementById("file-list");
+		const ownerInput = document.getElementById("repo-owner");
+		const repoInput = document.getElementById("repo-name");
+		const pathInput = document.getElementById("path");
+
+		function updateFileList() {
+			const repoOwner = ownerInput.value;
+			const repoName = repoInput.value;
+			const path = pathInput.value;
+
+			const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`;
+
+			// 清空下拉列表
+			select.innerHTML = "";
+
+			fetch(apiUrl)
+				.then(response => response.json())
+				.then(data => {
+					data.forEach(file => {
+						const option = document.createElement("option"); // 创建一个 option 元素
+						option.value = file.name; // 设置 option 元素的 value 属性为文件名
+						option.innerText = file.name; // 设置 option 元素的文本内容为文件名
+						select.appendChild(option); // 将该 option 元素添加到 select 元素中
+					});
+				})
+				.catch(err => console.error(err));
+		}
+
+		// 监听输入框的变化
+		ownerInput.addEventListener("input", updateFileList);
+		repoInput.addEventListener("input", updateFileList);
+		pathInput.addEventListener("input", updateFileList);
+	</script>
+</body>
+</html>

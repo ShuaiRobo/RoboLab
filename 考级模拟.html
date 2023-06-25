@@ -88,7 +88,7 @@
       margin-top: 10px;
     }
   </style>
-  <script src="https://cdn.staticfile.org/xlsx/0.16.8/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script>
     var timeLeft = 1800; // 倒计时时间，单位为秒
     var timerInterval; // 计时器的引用
@@ -112,89 +112,136 @@
       }
     }
 
+    function updateFileList() {
+      const owner = "ShuaiRobo"; // 仓库所有者的用户名
+      const repo = "RoboLab"; // 仓库名称
+      const path = "考级题目"; // 从目录开始搜索文件，可自定义文件路径
+      fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`)
+        .then(response => response.json())
+        .then(data => {
+          const fileSelect = document.getElementById("file");
+          data.forEach(file => {
+            if (file.type === "file") {
+              const option = document.createElement("option");
+              option.value = file.download_url;
+              option.textContent = file.path;
+              fileSelect.appendChild(option);
+            }
+          });
+        })
+        .catch(err => {
+          console.error(err);
+        });
+
+    }
+
     function jumpToQuestion(index) {
       var question = document.getElementById('question-' + index);
       question.scrollIntoView(); // 跳转对应题目
     }
 
-    function handleFileSelect(event) {
-      var file = event.target.files[0];
-      var reader = new FileReader();
+    function openFile() {
+      const element = document.getElementById('file'); // 获取元素
+      const path = element.value; // 获取元素内容
 
-      reader.onload = function (e) {
-        var data = new Uint8Array(e.target.result);
-        var workbook = XLSX.read(data, {
-          type: 'array'
-        });
-        var worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        var jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: 1
-        });
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', path, true);
+      xhr.responseType = 'arraybuffer';
 
-        var questionContainer = document.getElementById('question-container');
-        questionContainer.innerHTML = ''; // 清空题目容器
+      xhr.onload = function (e) {
+        if (this.status == 200) {
+          var data = new Uint8Array(this.response);
+          var workbook = XLSX.read(data, {
+            type: 'array'
+          });
 
-        for (var i = 1; i < jsonData.length; i++) {
-          var questionNumber = jsonData[i][0];
-          var questionContent = jsonData[i][1];
-          var optionA = jsonData[i][2];
-          var optionB = jsonData[i][3];
-          var optionC = jsonData[i][4];
-          var optionD = jsonData[i][5];
-          var answer = jsonData[i][6];
+          var questionContainer = document.getElementById('question-container');
+          questionContainer.innerHTML = ''; // 清空题目容器
 
-          var questionDiv = document.createElement('div');
-          questionDiv.id = 'question-' + questionNumber;
+          var sheet_name_list = workbook.SheetNames;
 
-          var questionHeading = document.createElement('h4');
-          questionHeading.innerText = '第' + questionNumber + '题';
+          function getCellValue(sheet, row, col) {
+            var cellAddress = XLSX.utils.encode_cell({
+              r: row,
+              c: col
+            });
+            return sheet[cellAddress] ? sheet[cellAddress].v : '';
+          }
 
-          var questionText = document.createElement('p');
-          questionText.innerText = questionContent;
+          var rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]], {
+            header: 1
+          });
 
-          var optionsDiv = document.createElement('div');
-          optionsDiv.className = 'options';
+          for (var i = 1; i < rows.length; i++) {
+            var row = rows[i];
+            var questionNumber = getCellValue(workbook.Sheets[sheet_name_list[0]], i, 0);
+            var questionContent = getCellValue(workbook.Sheets[sheet_name_list[0]], i, 1);
+            var optionA = getCellValue(workbook.Sheets[sheet_name_list[0]], i, 2);
+            var optionB = getCellValue(workbook.Sheets[sheet_name_list[0]], i, 3);
+            var optionC = getCellValue(workbook.Sheets[sheet_name_list[0]], i, 4);
+            var optionD = getCellValue(workbook.Sheets[sheet_name_list[0]], i, 5);
+            var answer = getCellValue(workbook.Sheets[sheet_name_list[0]], i, 6);
+            console.log(optionA)
+            var questionDiv = document.createElement('div');
+            questionDiv.id = 'question-' + questionNumber;
 
-          var optionALabel = document.createElement('label');
-          optionALabel.innerHTML = '<input type="radio" name="q' + questionNumber +
-            '" value="A" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionA;
+            var questionHeading = document.createElement('h4');
+            questionHeading.innerText = '第' + questionNumber + '题';
 
-          var optionBLabel = document.createElement('label');
-          optionBLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
-            '" value="B" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionB;
+            var questionText = document.createElement('p');
+            questionText.innerText = questionContent;
 
-          var optionCLabel = document.createElement('label');
-          optionCLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
-            '" value="C" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionC;
+            var optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options';
 
-          var optionDLabel = document.createElement('label');
-          optionDLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
-            '" value="D" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionD;
+            var optionALabel = document.createElement('label');
+            optionALabel.innerHTML = '<input type="radio" name="q' + questionNumber +
+              '" value="A" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionA;
 
-          optionsDiv.appendChild(optionALabel);
-          optionsDiv.appendChild(optionBLabel);
-          optionsDiv.appendChild(optionCLabel);
-          optionsDiv.appendChild(optionDLabel);
+            var optionBLabel = document.createElement('label');
+            optionBLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
+              '" value="B" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionB;
 
-          questionDiv.appendChild(questionHeading);
-          questionDiv.appendChild(questionText);
-          questionDiv.appendChild(optionsDiv);
+            var optionCLabel = document.createElement('label');
+            optionCLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
+              '" value="C" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionC;
 
-          questionContainer.appendChild(questionDiv);
-          questionContainer.appendChild(document.createElement('hr'));
+            var optionDLabel = document.createElement('label');
+            optionDLabel.innerHTML = '<input type="radio" name="q' + questionNumber +
+              '" value="D" onclick="markQuestionAsAnswered(' + questionNumber + ')"> ' + optionD;
+
+            optionsDiv.appendChild(optionALabel);
+            optionsDiv.appendChild(optionBLabel);
+            optionsDiv.appendChild(optionCLabel);
+            optionsDiv.appendChild(optionDLabel);
+
+            questionDiv.appendChild(questionHeading);
+            questionDiv.appendChild(questionText);
+            questionDiv.appendChild(optionsDiv);
+
+            questionContainer.appendChild(questionDiv);
+            questionContainer.appendChild(document.createElement('hr'));
+          }
         }
       };
-
-      reader.onloadend = function () {
+      xhr.send();
+      xhr.onloadend = function () {
         startTimer(); // 在文件读取完成后启动计时器
       };
 
-      reader.readAsArrayBuffer(file);
     }
 
     function markQuestionAsAnswered(index) {
       var questionItem = document.getElementById('question-item-' + index);
-      questionItem.style.backgroundColor = 'green'; //选择后将编号背景框改变颜色
+      questionItem.style.backgroundColor = 'lightblue'; //选择后将编号背景框改变颜色
+    }
+
+    updateFileList();
+
+    function test() {
+      const element = document.getElementById('file'); // 获取元素
+      const elementContent = element.value; // 获取元素内容
+      console.log(elementContent)
     }
   </script>
 </head>
@@ -203,7 +250,9 @@
 <body>
   <div class="container">
     <div class="sidebar">
-      <input type="file" id="file-input" accept=".xlsx" onchange="handleFileSelect(event)">
+      <label for="file">选择文件：</label>
+      <select name="file" id="file"></select>
+      <button onclick="openFile()">开始考试</button>
       <hr>
       <div class="timer" id="timer">剩余时间</div>
       <hr>
@@ -259,7 +308,7 @@
       <div id="question-container"></div>
     </div>
   </div>
-  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+
 </body>
 
 </html>
